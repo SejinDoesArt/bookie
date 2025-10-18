@@ -1,0 +1,165 @@
+/* ===== Base / Theme (retro Arcane/BioShock-inspired) ===== */
+:root{
+  --bg:#0c0f14;           /* deep midnight */
+  --bg-alt:#141a22;       /* panel surface */
+  --ink:#e6e0d2;          /* parchment ink */
+  --muted:#b6b0a3;
+  --gold:#cda25e;         /* aged brass */
+  --teal:#2d7f7a;         /* oxidized copper */
+  --crimson:#8c2f39;      /* deco accent */
+  --accent:#3f9d95;       /* highlight */
+  --maxw:1100px;
+  --radius:18px;
+  --shadow:0 20px 60px rgba(0,0,0,.45);
+}
+
+*{ box-sizing:border-box }
+html,body{ height:100% }
+body{
+  margin:0;
+  font:16px/1.6 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, #1a2130 0%, transparent 60%),
+    radial-gradient(1000px 500px at 110% 10%, #142028 0%, transparent 60%),
+    linear-gradient(#0a0e13, #0c0f14 45%, #0a0e13 100%);
+}
+
+/* Subtle film grain */
+body::before{
+  content:"";
+  position:fixed; inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 0 .05 0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.3'/%3E%3C/svg%3E");
+  opacity:.15; pointer-events:none; z-index:-1;
+}
+
+/* Utilities */
+.container{ max-width:var(--maxw); margin-inline:auto; padding:0 20px }
+.skip-link{
+  position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;
+}
+.skip-link:focus{ position:fixed; left:20px; top:12px; width:auto; height:auto; background:#000; color:#fff; padding:8px 10px; z-index:10 }
+
+/* ===== Header / Nav ===== */
+.site-header{
+  position:sticky; top:0; z-index:5;
+  background:linear-gradient(180deg, rgba(12,15,20,.9), rgba(12,15,20,.6));
+  backdrop-filter:saturate(130%) blur(6px);
+  border-bottom:1px solid rgba(205,162,94,.25);
+}
+.logo{
+  display:flex; align-items:center; justify-content:center;
+  gap:12px; margin:14px 0 6px;
+  font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--gold);
+}
+.logo-line{ flex:1; height:2px; background:linear-gradient(90deg, transparent, var(--gold), transparent) }
+.logo-text{ font-size:clamp(16px,2.3vw,22px) }
+
+.nav{ display:flex; gap:14px; list-style:none; margin:6px 0 14px; padding:0; justify-content:center; flex-wrap:wrap }
+.nav a{
+  display:inline-block; padding:8px 12px; text-decoration:none; color:var(--ink);
+  border:1px solid rgba(205,162,94,.25);
+  border-radius:999px;
+}
+.nav a:focus,.nav a:hover{ outline:0; border-color:var(--gold); color:var(--gold) }
+
+/* ===== Sections ===== */
+.snap-container{
+  scroll-snap-type:y mandatory;
+  scroll-padding-top:90px; /* header height buffer */
+}
+.snap{ scroll-snap-align:start }
+
+.block{
+  display:grid; grid-template-columns: 1fr 1fr;
+  gap:clamp(18px,3vw,40px);
+  align-items:center;
+  min-height: min(100svh, 900px);
+  padding: clamp(24px, 6vh, 72px) 0;
+  border-block:1px solid rgba(205,162,94,.15);
+}
+.block .media, .block .content{
+  width:100%; max-width:650px; margin-inline:auto;
+}
+.block .content{
+  background:linear-gradient(180deg, rgba(20,26,34,.9), rgba(20,26,34,.7));
+  border:1px solid rgba(205,162,94,.25);
+  border-radius:var(--radius);
+  padding:clamp(16px,2.5vw,28px);
+  box-shadow:var(--shadow);
+  position:relative;
+}
+.block .content::before{
+  /* deco corner lines */
+  content:"";
+  position:absolute; inset:-1px;
+  border:1px solid rgba(205,162,94,.35);
+  border-radius:calc(var(--radius) - 8px);
+  pointer-events:none;
+  mask: radial-gradient(circle at 12px 12px, transparent 10px, #000 10px) no-repeat,
+        radial-gradient(circle at calc(100% - 12px) 12px, transparent 10px, #000 10px) no-repeat,
+        radial-gradient(circle at 12px calc(100% - 12px), transparent 10px, #000 10px) no-repeat,
+        radial-gradient(circle at calc(100% - 12px) calc(100% - 12px), transparent 10px, #000 10px) no-repeat;
+  mask-size:24px 24px; mask-position:0 0, 100% 0, 0 100%, 100% 100%;
+  opacity:.6;
+}
+
+.media{ text-align:center }
+.media img{
+  width:100%; max-width:620px; height:auto; display:block; margin-inline:auto;
+  border-radius:var(--radius);
+  border:1px solid rgba(205,162,94,.25);
+  box-shadow:var(--shadow);
+}
+.media figcaption{
+  font-size:.875rem; color:var(--muted);
+  margin-top:8px;
+}
+
+.block--reverse .media{ order:2 }
+.block--reverse .content{ order:1 }
+
+/* Type */
+h2{
+  color:var(--gold);
+  margin:0 0 10px;
+  font-size:clamp(22px, 2.6vw, 30px);
+  letter-spacing:.02em;
+}
+h3{ color:var(--accent); margin:18px 0 6px; font-size:clamp(18px,2vw,22px) }
+p, li{ color:var(--ink) }
+strong{ color:#f0e9d8 }
+em{ color:var(--muted) }
+ul,ol{ padding-left:1.2rem }
+.closer{ margin-top:16px; font-style:italic; color:var(--muted) }
+
+/* Footer */
+.site-footer{
+  border-top:1px solid rgba(205,162,94,.2);
+  background:linear-gradient(0deg, rgba(12,15,20,.9), rgba(12,15,20,.5));
+}
+.site-footer .container{
+  display:flex; gap:12px; align-items:center; justify-content:space-between;
+  padding:18px 20px;
+}
+.to-top{ color:var(--gold); text-decoration:none }
+.to-top:hover,.to-top:focus{ text-decoration:underline }
+
+/* Motion/Reveal */
+.block{
+  opacity:.01; transform:translateY(24px);
+  transition:opacity .6s ease, transform .6s ease;
+}
+.block.visible{ opacity:1; transform:translateY(0) }
+@media (prefers-reduced-motion: reduce){
+  .block{ opacity:1; transform:none; transition:none }
+}
+
+/* Responsive */
+@media (max-width: 900px){
+  .block{ grid-template-columns: 1fr; padding: 40px 0 }
+  .block--reverse .media, .block--reverse .content{ order:initial }
+  .nav{ justify-content:flex-start; overflow:auto; white-space:nowrap }
+  .site-footer .container{ flex-direction:column; align-items:flex-start }
+}
