@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="The Bookie's Edge: How Eloria Signals Are Made" />
+  <title>The Bookie’s Edge — Eloria Signals</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Project sites live at /username/repo. All paths below are relative, so no <base> tag needed. -->
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header" role="banner" aria-label="Top">
+    <div class="container">
+      <h1 class="logo" aria-label="The Bookie’s Edge">
+        <span class="logo-line"></span>
+        <span class="logo-text">The Bookie’s Edge</span>
+        <span class="logo-line"></span>
+      </h1>
+      <nav aria-label="Section navigation">
+        <ul class="nav">
+          <li><a href="#signal">Signal</a></li>
+          <li><a href="#funnel">Quality Funnel</a></li>
+          <li><a href="#direction">Long vs Short</a></li>
+          <li><a href="#learning">Learning</a></li>
+          <li><a href="#filtering">Dropping Bad Signals</a></li>
+          <li><a href="#trace">End-to-End Trace</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="snap-container" tabindex="-1">
+    <!-- 1. Signal -->
+    <section id="signal" class="block snap" aria-labelledby="h-signal">
+      <figure class="media">
+        <img src="bookie1.jpg" alt="Lucky Louie—The Bookie—studying glowing market streams, gears and pipes framing the scene" />
+        <figcaption>How we turn noise into signal.</figcaption>
+      </figure>
+      <article class="content">
+        <h2 id="h-signal">1) What Counts as a “Signal”</h2>
+        <p>First thing’s first: a signal isn’t just a hunch. It’s a snapshot—fast, precise, and based on a stream of high-fidelity data. The engine tracks recent action to stay ahead of the curve.</p>
+        <ul>
+          <li><strong>Core Data:</strong> Rolling ~1-hour window; downsampled ticks (~2s) and 1-minute bars.</li>
+          <li><strong>Trend:</strong> Separation of fast/slow EMAs mapped to a 0–100 score.</li>
+          <li><strong>Impulse:</strong> Acceleration via EMA-slope delta, slightly short-biased.</li>
+          <li><strong>Momentum:</strong> 25–45s log return normalized by recent vol.</li>
+          <li><strong>Volatility:</strong> Z-score of minute returns → calm / normal / hot.</li>
+          <li><strong>Liquidity (liqScore):</strong> Percentile of activity; hard veto if too low.</li>
+          <li><strong>Risk Context:</strong> Levels, breakouts/breakdowns, “decision points.”</li>
+          <li><strong>Final Score:</strong> Base score adjusted for risk context and OB/OS → <em>generalScore</em> (0–100).</li>
+        </ul>
+      </article>
+    </section>
+
+    <!-- 2. Funnel -->
+    <section id="funnel" class="block block--reverse snap" aria-labelledby="h-funnel">
+      <figure class="media">
+        <img src="bookie2.jpg" alt="Art-deco control room—signals dropping through gates, only a few emerging in gold" />
+        <figcaption>The five-step quality funnel.</figcaption>
+      </figure>
+      <article class="content">
+        <h2 id="h-funnel">2) The Quality Funnel</h2>
+        <p>A high score is a start, not a ticket. Every candidate runs a gauntlet; only the best reach you.</p>
+        <ol>
+          <li><strong>Vetoes:</strong> Liquidity too low, contradictions, “Storm Rider,” or cooldown → tossed.</li>
+          <li><strong>Arming:</strong> Momentum/EMA/Impulse agree → becomes a candidate.</li>
+          <li><strong>Confirmation:</strong> Must cross a dynamic target within ~90–150s.</li>
+          <li><strong>Tiering:</strong> Strength by distance from 50: strong (≥22), moderate (≥12).</li>
+          <li><strong>Broadcast:</strong> Only strong signals hit the durable outbox → Telegram.</li>
+        </ol>
+      </article>
+    </section>
+
+    <!-- 3. Direction -->
+    <section id="direction" class="block snap" aria-labelledby="h-direction">
+      <figure class="media">
+        <img src="bookie3.jpg" alt="Split panel: luminous bull on the left, crimson bear on the right; Louie centered, confident" />
+        <figcaption>Picking long vs. short.</figcaption>
+      </figure>
+      <article class="content">
+        <h2 id="h-direction">3) Picking a Direction (Long vs. Short)</h2>
+        <ul>
+          <li><strong>Confidence Check:</strong> Calibrated win probabilities; must clear ~58% threshold.</li>
+          <li><strong>Alignment &amp; Risk:</strong> Multi-TF alignment; don’t long into a breakdown. Huge impulse can override minor risk.</li>
+          <li><strong>Bootstrap Mode:</strong> On fresh resets, thresholds relax slightly to learn—still only strong signals broadcast.</li>
+          <li><strong>Storm Rider Veto:</strong> Market-wide chaos (BTC/ETH impulse) blocks longs in a crash.</li>
+        </ul>
+      </article>
+    </section>
+
+    <!-- 4. Learning -->
+    <section id="learning" class="block block--reverse snap" aria-labelledby="h-learning">
+      <figure class="media">
+        <img src="bookie4.jpg" alt="Two panels: live signal outcome logged, then a vast glowing library of pattern capsules" />
+        <figcaption>Two feedback loops.</figcaption>
+      </figure>
+      <article class="content">
+        <h2 id="h-learning">4) How the System Learns &amp; Improves</h2>
+        <p>The engine is a learning machine with two loops:</p>
+        <h3>A) Forward-Tested Signals → Decile Calibration</h3>
+        <p>Each fired signal is tracked for one hour; results bucketed by coin, action, and score decile build a probability map.</p>
+        <h3>B) Historical Analysis → Pattern Database</h3>
+        <p>Back-simulates the firing logic on history and records outcomes plus context (impulse, momentum, vol label, etc.). Similar past patterns can veto a weak look-alike.</p>
+      </article>
+    </section>
+
+    <!-- 5. Filtering -->
+    <section id="filtering" class="block snap" aria-labelledby="h-filtering">
+      <figure class="media">
+        <img src="bookie5.jpg" alt="Retro console rejecting red cards while stamping golden approvals more rarely over time" />
+        <figcaption>Why fewer bad signals escape.</figcaption>
+      </figure>
+      <article class="content">
+        <h2 id="h-filtering">5) Why It Drops More Bad Signals Over Time</h2>
+        <ul>
+          <li><strong>Confidence Gating:</strong> Better calibration → weak setups fail early.</li>
+          <li><strong>Pattern Matching:</strong> Contextual filter vetoes known traps.</li>
+          <li><strong>Strict Guardrails:</strong> OB/OS caps and Storm Rider remain hard limits.</li>
+        </ul>
+      </article>
+    </section>
+
+    <!-- 6. Trace -->
+    <section id="trace" class="block block--reverse snap" aria-labelledby="h-trace">
+      <figure class="media">
+        <img src="bookie6.jpg" alt="Golden flowchart from compute → veto → confirm → broadcast → learn, in deco styling" />
+        <figcaption>The “happy path.”</figcaption>
+      </figure>
+      <article class="content">
+        <h2 id="h-trace">6) End-to-End Trace: The Perfect Play</h2>
+        <ol>
+          <li><strong>Compute</strong> features.</li>
+          <li><strong>Veto Check</strong> passes.</li>
+          <li><strong>Confidence &amp; Alignment</strong> clear.</li>
+          <li><strong>Arming</strong> sets target &amp; window.</li>
+          <li><strong>Confirmation</strong> hits within window.</li>
+          <li><strong>Tiering &amp; Queuing</strong> → strong only.</li>
+          <li><strong>Broadcast</strong> via Telegram.</li>
+          <li><strong>Learn</strong> outcomes fold back in.</li>
+        </ol>
+        <p class="closer">Clean, smart, and always playing the odds. Now, let’s go find a winner.</p>
+      </article>
+    </section>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+      <p>© <span id="year"></span> Lucky Louie — The Bookie</p>
+      <p><a href="#top" class="to-top">Back to top ↑</a></p>
+    </div>
+  </footer>
+
+  <script>
+    // Accessibility/nicety: current year + reveal-on-scroll
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!prefersReduced && 'IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) e.target.classList.add('visible');
+        });
+      }, { threshold: 0.25 });
+      document.querySelectorAll('.block').forEach(el => io.observe(el));
+    }
+  </script>
+</body>
+</html>
